@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>WASM Калькулятор</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="wasm_exec.js"></script>
+    <script>
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject)
+            .then((result) => {
+                go.run(result.instance);
+            });
+
+        function calculate(operation) {
+            const a = parseFloat(document.getElementById("num1").value);
+            const b = parseFloat(document.getElementById("num2").value);
+            let result;
+            
+            switch(operation) {
+                case 'add':
+                    result = wasmAdd(a, b);
+                    break;
+                case 'subtract':
+                    result = wasmSubtract(a, b);
+                    break;
+                case 'multiply':
+                    result = wasmMultiply(a, b);
+                    break;
+                case 'divide':
+                    result = wasmDivide(a, b);
+                    break;
+            }
+            
+            document.getElementById("result").textContent = result;
+        }
+    </script>
+</head>
+<body>
+    <div class="calculator">
+        <h1>WASM Калькулятор</h1>
+        <input type="number" id="num1" placeholder="Первое число">
+        <input type="number" id="num2" placeholder="Второе число">
+        <div class="buttons">
+            <button onclick="calculate('add')">+</button>
+            <button onclick="calculate('subtract')">-</button>
+            <button onclick="calculate('multiply')">×</button>
+            <button onclick="calculate('divide')">÷</button>
+        </div>
+        <div class="result">
+            Результат: <span id="result">0</span>
+        </div>
+    </div>
+</body>
+</html> 
